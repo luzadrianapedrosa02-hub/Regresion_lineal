@@ -85,7 +85,7 @@ Se aplicó un modelo de regresión lineal múltiple para analizar el efecto conj
 
 
 ## Conclusiones
-Los resultados del modelo de regresión lineal múltiple muestran que los hábitos de vida tienen una relación significativa con el bienestar emocional. En particular, las horas de sueño y la actividad física presentan efectos positivos y estadísticamente significativos, lo que sugiere que ambos factores contribuyen de manera importante al bienestar.
+Los resultados del modelo de regresión lineal múltiple nos muestran que los hábitos de vida tienen una relación significativa con el bienestar emocional. En particular, las horas de sueño y la actividad física presentan efectos positivos y estadísticamente significativos, lo que sugiere que ambos factores contribuyen de manera importante al bienestar.
 
 Por otro lado, aunque el uso de redes sociales presenta un coeficiente negativo, este no resulta estadísticamente significativo al controlar por otras variables, lo que indica que su efecto podría estar mediado por factores como el sueño o el ejercicio.
 
