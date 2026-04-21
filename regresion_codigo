@@ -1,58 +1,159 @@
-# Encuesta: Redes sociales y bienestar emocional
+## Modelado del bienestar emocional con variables independientes
 
-# Objetivo
-Analizar cómo el uso de redes sociales influye en el bienestar emocional.
+## Objetivo
+Evaluar la relación entre las horas de sueño, el uso de redes sociales y la actividad física como variables independientes en la predicción del bienestar emocional.
 
-# Variable dependiente
+## Variable dependiente
 - Nivel de bienestar emocional (0–100)
 
-# Variables independientes
+## Variables independientes
 - Horas en redes sociales
 - Edad
 - Horas de sueño
 - Frecuencia de ejercicio
 - Tipo de contenido
 
-# Encuesta
+## Encuesta
 https://forms.office.com/Pages/ResponsePage.aspx?id=cZgrEyXgrU6jTXvV56ODtLIv-OtCdWRLrsPLJBzl8KhUMzhFUkowTFEyWDJWUjVYRERSVTdNOFdJRS4u
 
-# Resultados
+## Resultados
 Los datos sugieren que un mayor uso de redes sociales se asocia con menor bienestar emocional, mientras que dormir más y hacer ejercicio mejora el bienestar.
 
-# Data frame 
+## Código empleado para la busqueda de resultafos 
+
+# ------------------------------------------------------------
+# Cargar librerias a utilizar 
+# ------------------------------------------------------------
+
+library(dplyr)
+library(ggplot2)
+library(ggcorrplot)
+
+# ------------------------------------------------------------
+# Data.frame 
+# ------------------------------------------------------------
+
 datos <- data.frame(
-  Edad = c(24,27,25,23,19,26,25,23,24,25,24,30,24,26,26),
-  Horas_Sueno = c(7,7,7,6,8,8,8,6,8,7,7,5,7,7,8),
-  Horas_Redes = c(4,3,4,6,3,5,3,4,5,3,1,5,4,4,1),
-  Ejercicio = c(4,4,2,3,6,1,3,4,1,2,4,1,3,5,4),
-  Bienestar = c(7,7,3,7,9,8,8,8,6,7,9,1,5,7,9)
+  Edad = c(24,27,25,23,19,26,25,23,24,25,24,30,24,26,26,
+           22,28,21,29,31,20,27,23,24,26,28,22,21,29,30),
+
+  Horas_Sueno = c(7,7,7,6,8,8,8,6,8,7,7,5,7,7,8,
+                  6,7,8,5,6,8,7,6,7,8,6,7,8,5,6),
+
+  Horas_Redes = c(4,3,4,6,3,5,3,4,5,3,1,5,4,4,1,
+                  5,3,2,6,5,2,4,5,3,2,6,3,2,5,6),
+
+  Ejercicio = c(4,4,2,3,6,1,3,4,1,2,4,1,3,5,4,
+                3,4,5,1,2,6,3,2,4,5,2,4,6,1,2),
+
+  Bienestar = c(7,7,3,7,9,8,8,8,6,7,9,1,5,7,9,
+                6,7,8,2,4,9,7,5,7,9,3,7,9,2,4)
 )
-print(datos)
 
-# Matriz Correlación 
-cor(datos)
+# ----------------------------------------------------------
+# Matriz correlacion
+# ----------------------------------------------------------
+corr <- round(cor(vars_corr, use = "pairwise.complete.obs"), 2)
 
-# Gráfica (bienestar vs horas en redes)
+# Visualizacion 
+ggcorrplot(corr,
+           method = "circle",      # tipo de gráfico
+           type = "lower",         # mostrar solo triángulo inferior
+           lab = TRUE,             # mostrar valores
+           lab_size = 3,
+           colors = c("#6D9EC1", "white", "#E46726"),
+           title = "Matriz de correlación de Pearson",
+           ggtheme = theme_minimal())
+
+# -------------------------------------------------------------
+# Bienestar vs. Horas en redes 
+# -------------------------------------------------------------
+
+# Modelo lineal
+modelo <- lm(Bienestar ~ Horas_Redes, data = datos)
+
+# Correlación de Pearson
+r <- cor(datos$Horas_Redes, datos$Bienestar)
+
+# Gráfica
 plot(datos$Horas_Redes, datos$Bienestar,
-     main="Bienestar vs Uso de Redes Sociales",
-     xlab="Horas en redes sociales",
-     ylab="Bienestar (0-10)",
-     col="blue",
-     pch=19)
+     main = "Bienestar vs Uso de Redes Sociales",
+     xlab = "Horas en redes sociales",
+     ylab = "Bienestar (0-10)",
+     col = rgb(0, 0, 1, 0.6),
+     pch = 19)
 
-abline(lm(Bienestar ~ Horas_Redes, data=datos), col="red")
+abline(modelo, col = "red", lwd = 2)
 
-# Grafica (bienestar vs horas de sueño)
+# Texto con r y ecuación
+eq <- paste0("y = ", round(coef(modelo)[1],2), " + ",
+             round(coef(modelo)[2],2), "x")
+
+text(x = max(datos$Horas_Redes)*0.7,
+     y = min(datos$Bienestar)+1,
+     labels = paste0("r = ", round(r,2), "\n", eq),
+     col = "black")
+# ------------------------------------------------------------
+# Bienestar vs horas de sueño
+# ------------------------------------------------------------
+
+# Modelo lineal
+modelo <- lm(Bienestar ~ Horas_Sueno, data = datos)
+
+# Correlación de Pearson
+r <- cor(datos$Horas_Sueno, datos$Bienestar)
+
+# Gráfica
 plot(datos$Horas_Sueno, datos$Bienestar,
-     main="Bienestar vs Horas de sueño",
-     xlab="Horas de sueño",
-     ylab="Bienestar (0-10)",
-     col="blue",
-     pch=19)
+     main = "Bienestar vs Horas de Sueño",
+     xlab = "Horas de sueño",
+     ylab = "Bienestar (0-10)",
+     col = rgb(0, 0, 1, 0.6),
+     pch = 19)
 
-abline(lm(Bienestar ~ Horas_Redes, data=datos), col="red")
+abline(modelo, col = "red", lwd = 2)
 
+# Texto con r y ecuación
+eq <- paste0("y = ", round(coef(modelo)[1],2), " + ",
+             round(coef(modelo)[2],2), "x")
+
+text(x = max(datos$Horas_Sueno)*0.7,
+     y = min(datos$Bienestar)+1,
+     labels = paste0("r = ", round(r,2), "\n", eq),
+     col = "black")
+
+# --------------------------------------------------------
+# Bienestar vs Ejercicio 
+# --------------------------------------------------------
+
+# Modelo lineal
+modelo <- lm(Bienestar ~ Ejercicio, data = datos)
+
+# Correlación de Pearson
+r <- cor(datos$Ejercicio, datos$Bienestar)
+
+# Gráfica
+plot(datos$Ejercicio, datos$Bienestar,
+     main = "Bienestar vs Horas de Ejercicio",
+     xlab = "Horas de ejercicio",
+     ylab = "Bienestar (0-10)",
+     col = rgb(0, 0, 1, 0.6),
+     pch = 19)
+
+abline(modelo, col = "red", lwd = 2)
+
+# Texto con r y ecuación
+eq <- paste0("y = ", round(coef(modelo)[1],2), " + ",
+             round(coef(modelo)[2],2), "x")
+
+text(x = max(datos$Ejercicio)*0.7,
+     y = min(datos$Bienestar)+1,
+     labels = paste0("r = ", round(r,2), "\n", eq),
+     col = "black")
+
+# ----------------------------------------------------------
 # Regreción Lineal
+# ----------------------------------------------------------
 
 modelo <- lm(Bienestar ~ Horas_Redes + Horas_Sueno + Ejercicio, data=datos)
 summary(modelo)
